@@ -6,12 +6,14 @@
  */
 function getState(state) {
 	switch (state) {
+	case 'visibility':
 	case 'visible':
 	case 'invisible':
 		return document.hidden ? 'hidden' : 'visible';
 	case 'online':
 	case 'offline':
 		return typeof navigator.onLine !== 'undefined' && !navigator.onLine ? 'offline' : 'online';
+	case 'appState':
 	case 'active':
 	case 'inactive':
 		return (getState('visible') !== 'visible' || getState('online') !== 'online') ? 'inactive' : 'active';
