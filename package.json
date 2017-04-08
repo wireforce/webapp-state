@@ -8,12 +8,12 @@
   "repository": "https://github.com/wireforce/webapp-state.git",
   "author": "wireforce <wireforce@users.noreply.github.com>",
   "bugs": {
-	"url": "https://github.com/wireforce/webapp-state/issues"
+    "url": "https://github.com/wireforce/webapp-state/issues"
   },
   "license": "MIT",
   "keywords": [
     "page visibility api",
-	"navigator onLine",
+    "navigator onLine",
     "visibilitychange event",
     "online event",
     "offline event"
