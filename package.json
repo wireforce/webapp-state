@@ -1,16 +1,22 @@
 {
   "name": "webapp-state",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "A utility with sugar on top of the low-level online/offline events and the Page Visibility API",
   "main": "./dist/index.js",
   "module": "./src/index.js",
   "jsnext:main": "./src/index.js",
-  "repository": "https://github.com/wireforce/webapp-state.git",
   "author": "wireforce <wireforce@users.noreply.github.com>",
-  "bugs": {
-    "url": "https://github.com/wireforce/webapp-state/issues"
-  },
   "license": "MIT",
+  "repository": "https://github.com/wireforce/webapp-state.git",
+  "bugs": {
+	"url": "https://github.com/wireforce/webapp-state/issues"
+  },
+  "files": [
+	"dist",
+	"src",
+	"CHANGELOG.md",
+	"README.md"
+  ],
   "keywords": [
     "page visibility api",
     "navigator onLine",
