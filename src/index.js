@@ -1,7 +1,7 @@
 /**
  * Returns the state as a string for the given state, or all states in an object if no state is given
  *
- * @param {String} state
+ * @param {String} [state]
  * @returns {String|Object}
  */
 function getState(state) {
@@ -109,7 +109,7 @@ function addAppStateChangeListener(callback) {
  *
  * @param {Function} callback
  * @param {Number} timeout
- * @param {Object} options
+ * @param {Object} [options]
  * @returns {function()}
  */
 function setStateAwareInterval(callback, timeout, options = { triggerOnSetup: false, state: 'active' }) {

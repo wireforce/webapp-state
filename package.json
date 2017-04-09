@@ -2,7 +2,7 @@
   "name": "webapp-state",
   "version": "1.0.0",
   "description": "A utility with sugar on top of the low-level online/offline events and the Page Visibility API",
-  "main": "./lib/index.js",
+  "main": "./dist/index.js",
   "module": "./src/index.js",
   "jsnext:main": "./src/index.js",
   "repository": "https://github.com/wireforce/webapp-state.git",
