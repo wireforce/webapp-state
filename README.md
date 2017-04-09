@@ -70,7 +70,7 @@ console.log(getState('active')); // Prints "active" if the app is online and vis
 console.log(getState()); // Prints an object with all three states above { online, visible, active }
 ```
 
-### appIs()
+### appIs(state)
 
 getState takes one argument, a string with the name of a state. It then returns true if the app is in that state, false otherwise.
 
@@ -99,7 +99,7 @@ addAppStateChangeListener(() => {
 });
 ```
 
-### addVisibilityChangeListener()
+### addVisibilityChangeListener(callback, [options])
 
 Listen to changes in visibility. Fires the callback with a string, visible or invisible, when the state changes.
 The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
@@ -114,7 +114,7 @@ addVisibilityChangeListener((visibility) => {
 });
 ```
 
-### addOnlineChangeListener()
+### addOnlineChangeListener(callback, [options])
 
 Listen to changes in connectivity. Fires the callback with a string, online or offline, when the state changes.
 The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
@@ -129,7 +129,7 @@ addOnlineChangeListener((connectivity) => {
 });
 ```
 
-### addAppStateChangeListener()
+### addAppStateChangeListener(callback, [options])
 
 Listen to changes in visibility and connectivity. Fires the callback with a string, active (both online and visible) or inactive, when the state changes.
 The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
@@ -144,7 +144,7 @@ addAppStateChangeListener((appState) => {
 });
 ```
 
-### setStateAwareInterval()
+### setStateAwareInterval(callback, timeout, [options])
 
 Like the native setInterval but it will pause the interval when the app-state is not in the given options.state.
 Default is that it sets the interval as long as the app is active (online and visible) and pauses it otherwise.
