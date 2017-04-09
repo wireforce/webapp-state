@@ -1,4 +1,4 @@
-# webapp-state
+# webapp-state [![Gemnasium](https://img.shields.io/gemnasium/mathiasbynens/he.svg)]() [![gzipped size](https://img.shields.io/badge/gzipped-0.7kb-brightgreen.svg)]()
 A modern and small webapp utility with convenient sugar on top of the low-level online/offline events and the Page Visibility API
 
 The compressed size of the library is < 0.7kB and exposes the following methods:
@@ -55,9 +55,12 @@ const removeInterval = setStateAwareInterval(() => {
 removeInterval();
 ```
 
-## API docs
+## Docs
 
-### getState()
+### getState(state)
+
+getState takes one argument, a string with the name of the state that you want to get current state of. It returns a string with the current state.
+
 ```
 import { getState } from 'webapp-state';
 
@@ -68,30 +71,41 @@ console.log(getState()); // Prints an object with all three states above { onlin
 ```
 
 ### appIs()
-```
-import { appIs } from 'webapp-state';
 
-if (appIs('online')) {
-	console.log('App is online!');
-}
-if (appIs('offline')) {
-	console.log('App is offline...');
-}
-if (appIs('visible')) {
-	console.log('App is visible!');
-}
-if (appIs('invisible')) {
-	console.log('App is invisible...');
-}
-if (appIs('active')) {
-	console.log('App is active!');
-}
-if (appIs('inactive')) {
-	console.log('App is inactive...');
-}
+getState takes one argument, a string with the name of a state. It then returns true if the app is in that state, false otherwise.
+
+```
+import { appIs, addAppStateChangeListener } from 'webapp-state';
+
+addAppStateChangeListener(() => {
+	if (appIs('online')) {
+		console.log('App is online!');
+	}
+	if (appIs('offline')) {
+		console.log('App is offline...');
+	}
+	if (appIs('visible')) {
+		console.log('App is visible!');
+	}
+	if (appIs('invisible')) {
+		console.log('App is invisible...');
+	}
+	if (appIs('active')) {
+		console.log('App is active!');
+	}
+	if (appIs('inactive')) {
+		console.log('App is inactive...');
+	}
+});
 ```
 
 ### addVisibilityChangeListener()
+
+Listen to changes in visibility. Fires the callback with a string, visible or invisible, when the state changes.
+The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
+Set "once" to true, to remove the listener after the first trigger.
+Set "triggerOnSetup" to true to trigger the listener immediately when it is set.
+
 ```
 import { addVisibilityChangeListener } from 'webapp-state';
 
@@ -101,6 +115,12 @@ addVisibilityChangeListener((visibility) => {
 ```
 
 ### addOnlineChangeListener()
+
+Listen to changes in connectivity. Fires the callback with a string, online or offline, when the state changes.
+The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
+Set "once" to true, to remove the listener after the first trigger.
+Set "triggerOnSetup" to true to trigger the listener immediately when it is set.
+
 ```
 import { addOnlineChangeListener } from 'webapp-state';
 
@@ -110,6 +130,12 @@ addOnlineChangeListener((connectivity) => {
 ```
 
 ### addAppStateChangeListener()
+
+Listen to changes in visibility and connectivity. Fires the callback with a string, active (both online and visible) or inactive, when the state changes.
+The options object has two optional options that defaults to { once: false, triggerOnSetup: false }
+Set "once" to true, to remove the listener after the first trigger.
+Set "triggerOnSetup" to true to trigger the listener immediately when it is set.
+
 ```
 import { addAppStateChangeListener } from 'webapp-state';
 
@@ -119,6 +145,13 @@ addAppStateChangeListener((appState) => {
 ```
 
 ### setStateAwareInterval()
+
+Like the native setInterval but it will pause the interval when the app-state is not in the given options.state.
+Default is that it sets the interval as long as the app is active (online and visible) and pauses it otherwise.
+The options object has two optional options that defaults to { triggerOnSetup: false, state: 'active' }
+Set "triggerOnSetup" to true to trigger the callback immediately when it is set.
+Set "state" to the state that you want the interval to run on, visible/invisible/online/offline/active/inactive (default is active)
+
 ```
 import { setStateAwareInterval } from 'webapp-state';
 

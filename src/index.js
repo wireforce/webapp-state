@@ -50,6 +50,9 @@ function addVisibilityChangeListener(callback, options = {}) {
 			removeListener(); // eslint-disable-line
 		}
 	};
+	if (options.triggerOnSetup) {
+		callback(getState('visible'));
+	}
 	const removeListener = () => {
 		document.removeEventListener('visibilitychange', listener, false);
 	};
@@ -71,6 +74,9 @@ function addOnlineChangeListener(callback, options = {}) {
 			removeListener(); // eslint-disable-line
 		}
 	};
+	if (options.triggerOnSetup) {
+		callback(getState('online'));
+	}
 	const removeListener = () => {
 		window.removeEventListener('offline', listener, false);
 		window.removeEventListener('online', listener, false);
@@ -89,12 +95,20 @@ function addOnlineChangeListener(callback, options = {}) {
  * the online-state, or the visible-state changes and the states are 'online' AND 'visible'
  *
  * @param {Function} callback
+ * @param {Object} [options]
  * @returns {function()}
  */
-function addAppStateChangeListener(callback) {
+function addAppStateChangeListener(callback, options = {}) {
 	const emit = () => {
 		callback(getState('active'));
+		if (options.once) {
+			removeVisibilityListener(); // eslint-disable-line
+			removeOnlineListener(); // eslint-disable-line
+		}
 	};
+	if (options.triggerOnSetup) {
+		callback(getState('active'));
+	}
 	const removeVisibilityListener = addVisibilityChangeListener(emit);
 	const removeOnlineListener = addOnlineChangeListener(emit);
 	return () => {
