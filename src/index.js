@@ -1,21 +1,41 @@
 /**
+ * Resolves all statuses to either visibility, connectivity or app
+ *
+ * @param {String} state
+ * @returns {String}
+ */
+function resolveType(state) {
+	switch (state) {
+	case 'visibility':
+	case 'visible':
+	case 'invisible':
+		return 'visibility';
+	case 'connectivity':
+	case 'online':
+	case 'offline':
+		return 'connectivity';
+	case 'app':
+	case 'active':
+	case 'inactive':
+		return 'app';
+	default:
+		return '';
+	}
+}
+
+/**
  * Returns the state as a string for the given state, or all states in an object if no state is given
  *
  * @param {String} [state]
  * @returns {String|Object}
  */
 function getState(state) {
-	switch (state) {
+	switch (resolveType(state)) {
 	case 'visibility':
-	case 'visible':
-	case 'invisible':
 		return document.hidden ? 'hidden' : 'visible';
-	case 'online':
-	case 'offline':
+	case 'connectivity':
 		return typeof navigator.onLine !== 'undefined' && !navigator.onLine ? 'offline' : 'online';
-	case 'appState':
-	case 'active':
-	case 'inactive':
+	case 'app':
 		return (getState('visible') !== 'visible' || getState('online') !== 'online') ? 'inactive' : 'active';
 	default:
 		return {
@@ -37,88 +57,63 @@ function appIs(state) {
 }
 
 /**
- * Add a callback that will receive 'hidden' or 'visible' when the visibility-state changes
+ * If "type" is "visibility":
+ * The callback will be called with 'hidden' or 'visible' when the visibility-state changes
  *
- * @param {Function} callback
- * @param {Object} [options]
- * @returns {function()}
- */
-function addVisibilityChangeListener(callback, options = {}) {
-	const listener = () => {
-		callback(getState('visible'));
-		if (options.once) {
-			removeListener(); // eslint-disable-line
-		}
-	};
-	if (options.triggerOnSetup) {
-		callback(getState('visible'));
-	}
-	const removeListener = () => {
-		document.removeEventListener('visibilitychange', listener, false);
-	};
-	document.addEventListener('visibilitychange', listener, false);
-	return removeListener;
-}
-
-/**
- * Add a callback the will receive 'offline' or 'online' when the online-state changes
+ * If "type" is "visibility":
+ * The callback will be called with 'offline' or 'online' when the online-state changes
  *
- * @param {Function} callback
- * @param {Object} [options]
- * @returns {function()}
- */
-function addOnlineChangeListener(callback, options = {}) {
-	const listener = () => {
-		callback(getState('online'));
-		if (options.once) {
-			removeListener(); // eslint-disable-line
-		}
-	};
-	if (options.triggerOnSetup) {
-		callback(getState('online'));
-	}
-	const removeListener = () => {
-		window.removeEventListener('offline', listener, false);
-		window.removeEventListener('online', listener, false);
-	};
-	window.addEventListener('offline', listener, false);
-	window.addEventListener('online', listener, false);
-	return removeListener;
-}
-
-/**
- * Listen to the app state.
- * The callback will be called with 'inactive' if:
+ * If "type" is "app":
+ * The callback will be called with 'inactive' if;
  * the online-state, or the visible-state changes and one of the states are either 'offline' OR 'invisible'
- *
- * The callback will be called with 'active' if:
+ * The callback will be called with 'active' if;
  * the online-state, or the visible-state changes and the states are 'online' AND 'visible'
  *
- * @param {Function} callback
- * @param {Object} [options]
+ * @param {String} type | visibility, connectivity, app
+ * @param {Function} callback | will receive a single argument with the current state of "type", as a string
+ * @param {Object} [options] | { triggerOnSetup: false, once: false }
  * @returns {function()}
  */
-function addAppStateChangeListener(callback, options = {}) {
-	const emit = () => {
-		callback(getState('active'));
+function setupEventListener(type, callback, options = { triggerOnSetup: false, once: false }) {
+	let removeListener = () => {};
+
+	const listener = () => {
+		callback(getState(type));
 		if (options.once) {
-			removeVisibilityListener(); // eslint-disable-line
-			removeOnlineListener(); // eslint-disable-line
+			removeListener();
 		}
 	};
+
 	if (options.triggerOnSetup) {
-		callback(getState('active'));
+		callback(getState(type));
 	}
-	const removeVisibilityListener = addVisibilityChangeListener(emit);
-	const removeOnlineListener = addOnlineChangeListener(emit);
-	return () => {
-		removeVisibilityListener();
-		removeOnlineListener();
-	};
+
+	if (type === 'visibility') {
+		removeListener = () => {
+			document.removeEventListener('visibilitychange', listener, false);
+		};
+		document.addEventListener('visibilitychange', listener, false);
+	} else if (type === 'connectivity') {
+		removeListener = () => {
+			window.removeEventListener('offline', listener, false);
+			window.removeEventListener('online', listener, false);
+		};
+		window.addEventListener('offline', listener, false);
+		window.addEventListener('online', listener, false);
+	} else if (type === 'app') {
+		const removeVisibilityListener = setupEventListener('visibility', listener);
+		const removeConnectivityListener = setupEventListener('connectivity', listener);
+		removeListener = () => {
+			removeVisibilityListener();
+			removeConnectivityListener();
+		};
+	}
+
+	return removeListener;
 }
 
 /**
- * Like the native setInterval but it will pause the interval when the app-state is not in the given options.state
+ * Like the native setInterval but it will pause the interval when the current state is not in the given options.state
  * Default is that it sets the interval as long as the app is active (online and visible)
  *
  * @param {Function} callback
@@ -126,15 +121,7 @@ function addAppStateChangeListener(callback, options = {}) {
  * @param {Object} [options]
  * @returns {function()}
  */
-function setStateAwareInterval(callback, timeout, options = { triggerOnSetup: false, state: 'active' }) {
-	let interval;
-	let listener = addAppStateChangeListener;
-	if (options.state === 'visible') {
-		listener = addVisibilityChangeListener;
-	} else if (options.state === 'online') {
-		listener = addOnlineChangeListener;
-	}
-
+function setupStateAwareInterval(callback, timeout, options = { triggerOnSetup: false, state: 'active' }) {
 	const setupInterval = () => {
 		if (options.triggerOnSetup) {
 			callback();
@@ -142,11 +129,12 @@ function setStateAwareInterval(callback, timeout, options = { triggerOnSetup: fa
 		return setInterval(callback, timeout);
 	};
 
+	let interval;
 	if (getState(options.state) === options.state) {
 		interval = setupInterval();
 	}
 
-	const removeListener = listener((newState) => {
+	const removeListener = setupEventListener(resolveType(options.state), (newState) => {
 		if (newState === options.state) {
 			interval = setupInterval();
 		} else {
@@ -163,8 +151,6 @@ function setStateAwareInterval(callback, timeout, options = { triggerOnSetup: fa
 export {
 	appIs,
 	getState,
-	addVisibilityChangeListener,
-	addOnlineChangeListener,
-	addAppStateChangeListener,
-	setStateAwareInterval,
+	setupEventListener,
+	setupStateAwareInterval,
 };
