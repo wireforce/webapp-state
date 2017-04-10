@@ -45,7 +45,7 @@ const webappState = require('webapp-state');
 const { appIs, getState, setupEventListener, setupStateAwareInterval } = webappState;
 ```
 
-## UMD or oldschool browser-global
+### UMD or oldschool browser-global
 
 ```html
 <script src="https://unpkg.com/webapp-state/dist/webappState.min.js"></script>
