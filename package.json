@@ -1,6 +1,6 @@
 {
   "name": "webapp-state",
-  "version": "1.0.3",
+  "version": "2.0.0",
   "description": "A utility with sugar on top of the low-level online/offline events and the Page Visibility API",
   "main": "./dist/index.js",
   "module": "./src/index.js",
@@ -22,10 +22,12 @@
     "navigator onLine",
     "visibilitychange event",
     "online event",
-    "offline event"
+    "offline event",
+    "setInterval",
+    "poller"
   ],
   "scripts": {
-    "build": "babel src --out-dir dist",
+    "build": "babel src --out-dir dist && node ./scripts/buildUmd.js",
     "prepublish": "npm run build"
   },
   "devDependencies": {
