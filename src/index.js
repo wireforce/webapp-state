@@ -36,12 +36,12 @@ function getState(state) {
 	case 'connectivity':
 		return typeof navigator.onLine !== 'undefined' && !navigator.onLine ? 'offline' : 'online';
 	case 'app':
-		return (getState('visible') !== 'visible' || getState('online') !== 'online') ? 'inactive' : 'active';
+		return (getState('visibility') !== 'visible' || getState('connectivity') !== 'online') ? 'inactive' : 'active';
 	default:
 		return {
-			visible: getState('visible'),
-			online: getState('online'),
-			active: getState('active')
+			visible: getState('visibility'),
+			online: getState('connectivity'),
+			active: getState('app')
 		};
 	}
 }
@@ -122,6 +122,7 @@ function setupEventListener(type, callback, options = { triggerOnSetup: false, o
  * @returns {function()}
  */
 function setupStateAwareInterval(callback, timeout, options = { triggerOnSetup: false, state: 'active' }) {
+	const state = options.state || 'active';
 	const setupInterval = () => {
 		if (options.triggerOnSetup) {
 			callback();
@@ -130,12 +131,12 @@ function setupStateAwareInterval(callback, timeout, options = { triggerOnSetup: 
 	};
 
 	let interval;
-	if (getState(options.state) === options.state) {
+	if (getState(state) === state) {
 		interval = setupInterval();
 	}
 
-	const removeListener = setupEventListener(resolveType(options.state), (newState) => {
-		if (newState === options.state) {
+	const removeListener = setupEventListener(resolveType(state), (newState) => {
+		if (newState === state) {
 			interval = setupInterval();
 		} else {
 			clearInterval(interval);

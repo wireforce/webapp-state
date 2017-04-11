@@ -3,7 +3,7 @@ A modern webapp utility with a small footprint that gives you convenient sugar o
 
 The compressed size of the library is < 0.7kB and exposes the following methods:
 
-```
+```javascript
 appIs(state);
 getState(state);
 setupEventListener(type, callback, [options]);
