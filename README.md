@@ -131,7 +131,7 @@ console.log(getState()); // Prints an object with all three states above { onlin
 
 ### appIs(state)
 
-getState takes one argument, a string with the name of a state. It then returns true if the app is in that state, false otherwise.
+appIs takes one argument, a string with the name of a state. It then returns true if the app is in that state, false otherwise.
 
 ```javascript
 import { appIs, setupEventListener } from 'webapp-state';
