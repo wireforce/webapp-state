@@ -1,3 +1,7 @@
+# 2.0.1
+
+- Made sure the default state for setupStateAwareInterval is "active"
+
 # 2.0.0
 
 - Added umd/browser-global build.
