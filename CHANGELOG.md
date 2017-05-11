@@ -1,3 +1,8 @@
+# 2.0.2
+
+- Adding the "browser" build in package.json
+- Defer the triggerOnSetup-call to after the function is setup, to make sure the remove-callback is available inside it
+
 # 2.0.1
 
 - Made sure the default state for setupStateAwareInterval is "active"

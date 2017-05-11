@@ -85,7 +85,7 @@ function setupEventListener(type, callback, options = { triggerOnSetup: false, o
 	};
 
 	if (options.triggerOnSetup) {
-		callback(getState(type));
+		setTimeout(() => callback(getState(type)), 1);
 	}
 
 	if (type === 'visibility') {
@@ -125,7 +125,7 @@ function setupStateAwareInterval(callback, timeout, options = { triggerOnSetup: 
 	const state = options.state || 'active';
 	const setupInterval = () => {
 		if (options.triggerOnSetup) {
-			callback();
+			setTimeout(callback, 1);
 		}
 		return setInterval(callback, timeout);
 	};
