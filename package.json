@@ -1,7 +1,8 @@
 {
   "name": "webapp-state",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "A utility with sugar on top of the low-level online/offline events and the Page Visibility API",
+  "browser": "./dist/index.js",
   "main": "./dist/index.js",
   "module": "./src/index.js",
   "jsnext:main": "./src/index.js",
